@@ -1,0 +1,87 @@
+﻿using System.Data;
+using System.Diagnostics;
+using Business.Dtos;
+using Business.Factories;
+using Business.Interfaces;
+using Business.Models;
+using Data.Entities;
+using Data.Interfaces;
+using Data.Repositories;
+
+namespace Business.Services;
+
+public class EmployeeService(IEmployeeRepository employeeRepository, IRoleReporistory roleRepository) : IEmployeeService
+{
+    private readonly IEmployeeRepository _employeeRepository = employeeRepository;
+    private readonly IRoleReporistory _roleRepository = roleRepository;
+
+    public async Task<IResponseResult> CreateEmployeeAsync(EmployeeRegistrationForm form)
+    {
+        if (form == null)
+            return ResponseResult.BadRequest("Invalid form");
+
+        try
+        {
+            var roleEntity = await _roleRepository.GetAsync(r => r.RoleName == form.RoleName);
+            if (roleEntity == null)
+            {
+                roleEntity = new RoleEntity { RoleName = form.RoleName };
+                await _roleRepository.CreateAsync(roleEntity);
+            }
+
+            var employeeEntity = EmployeeFactory.CreateEntity(form, roleEntity.Id);
+            await _employeeRepository.CreateAsync(employeeEntity);
+
+            return ResponseResult.Ok();
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.Message);
+            return ResponseResult.Error("Error creating employee");
+        }
+    }
+
+    public async Task<IResponseResult> DeleteEmployeeAsync(int id)
+    {
+        var entity = await _employeeRepository.GetAsync(x => x.Id == id);
+        if (entity == null)
+            return ResponseResult.NotFound("Employee not found");
+
+        var result = await _employeeRepository.DeleteAsync(x => x.Id == id);
+        return result ? ResponseResult.Ok() : ResponseResult.Error("Unable to delete employee");
+    }
+
+    public async Task<IResponseResult> GetEmployeeByIdAsync(int id)
+    {
+        var entity = await _employeeRepository.GetAsync(x => x.Id == id);
+        if (entity == null)
+            return ResponseResult.NotFound("Employee not found");
+
+        var employee = EmployeeFactory.CreateModel(entity);
+        return ResponseResult<Employee>.Ok(employee);
+    }
+
+    public async Task<IResponseResult> GetAllEmployeesAsync()
+    {
+        var entites = await _employeeRepository.GetAllAsync();
+        var employees = entites.Select(EmployeeFactory.CreateModel).ToList();
+        return ResponseResult<IEnumerable<Employee>>.Ok(employees);
+    }
+
+    public async Task<IResponseResult> UpdateEmployeeAsync(int id, EmployeeRegistrationForm updateForm)
+    {
+        var entityToUpdate = await _employeeRepository.GetAsync(x => x.Id == id);
+        if (entityToUpdate == null)
+            return ResponseResult.NotFound("Employee not found");
+
+        entityToUpdate = EmployeeFactory.CreateEntity(updateForm, entityToUpdate.Id);
+        var result = await _employeeRepository.UpdateAsync(x => x.Id == id, entityToUpdate);
+
+        return result ? ResponseResult.Ok() : ResponseResult.Error("Unable to update employee");
+    }
+
+    public Task<IResponseResult> GetEmployeesAsync()
+    {
+        throw new NotImplementedException();
+    }
+}
