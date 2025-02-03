@@ -1,30 +1,48 @@
-﻿using Data.Contexts;
+﻿using System.Diagnostics;
+using System.Linq.Expressions;
+using Data.Contexts;
 using Data.Entities;
 using Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System.Linq.Expressions;
 
 namespace Data.Repositories;
 
 public class EmployeeRepository(DataContext context) : BaseRepository<EmployeeEntity>(context), IEmployeeRepository
 {
-
     public override async Task<IEnumerable<EmployeeEntity>> GetAllAsync()
     {
-        var entities = await _context.Employees
-            .Include(x => x.Role)
-            .ToListAsync();
+        try
+        {
+            var entities = await _context.Employees
+                .Include(x => x.Role)
+                .ToListAsync();
 
-        return entities;
+            return entities;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error retrieving entities :: {ex.Message}");
+            return null!;
+        }
     }
 
     public override async Task<EmployeeEntity> GetAsync(Expression<Func<EmployeeEntity, bool>> expression)
     {
-        var entity = await _context.Employees
-            .Include(x => x.Role)
-            .FirstOrDefaultAsync(expression);
+        if (expression == null)
+            return null!;
 
-        return entity ?? null!;
+        try
+        {
+            var entity = await _context.Employees
+                .Include(x => x.Role)
+                .FirstOrDefaultAsync(expression);
+
+            return entity ?? null!;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error retrieving employee :: {ex.Message}");
+            return null!;
+        }
     }
 }

@@ -6,25 +6,24 @@ namespace Business.Factories;
 
 public static class ProjectFactory
 {
-    public static ProjectEntity Create(ProjectRegistrationForm registrationForm, int emplyoeeId, int customerId, int serviceId, int statusId) => new()
+    public static ProjectEntity Create(ProjectRegistrationForm registrationForm) => new()
     {
         Title = registrationForm.Title,
         EndDate = registrationForm.EndDate,
 
-        EmployeeId = emplyoeeId,
-        CustomerId = customerId,
-        ServiceId = serviceId,
-        StatusId = statusId
+        EmployeeId = registrationForm.EmployeeNameId,
+        CustomerId = registrationForm.CustomerNameId,
+        StatusId = registrationForm.StatusTypeId
 
     };
 
     public static Project Create(ProjectEntity entity) => new()
     {
+        Id = entity.Id,
         Title = entity.Title,
         EndDate = entity.EndDate.ToString(),
-        EmployeeName = entity.Employee.FirstName,
+        EmployeeName = entity.Employee.FirstName + " " + entity.Employee.LastName,
         CustomerName = entity.Customer.Name,
-        ServiceName = entity.Service,
         StatusType = entity.Status.StatusType
     };
 }

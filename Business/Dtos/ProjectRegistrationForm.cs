@@ -10,8 +10,7 @@ public class ProjectRegistrationForm
 {
     public string Title { get; set; } = null!;
     public DateTime EndDate { get; set; }
-    public string EmployeeName { get; set; } = null!;
-    public string CustomerName { get; set; } = null!;
-    public string Servicename { get; set; } = null!;
-    public string StatusType { get; set; } = null!;
+    public int EmployeeNameId { get; set; }
+    public int CustomerNameId { get; set; }
+    public int StatusTypeId { get; set; }
 }

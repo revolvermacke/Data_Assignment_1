@@ -6,5 +6,4 @@ namespace Data.Repositories;
 
 public class RoleRepository(DataContext context) : BaseRepository<RoleEntity>(context), IRoleReporistory
 {
-    private readonly DataContext _context = context;
 }

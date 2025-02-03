@@ -7,8 +7,7 @@ public class UnitEntity
     [Key]
     public int Id { get; set; }
     [StringLength(10)]
-    public int Quantity { get; set; }
+    public string Quantity { get; set; } = null!;
 
-    public int ServiceId { get; set; }
     public ICollection<ServiceEntity> Services { get; set; } = [];
 }

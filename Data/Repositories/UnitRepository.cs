@@ -6,5 +6,5 @@ namespace Data.Repositories;
 
 public class UnitRepository(DataContext context) : BaseRepository<UnitEntity>(context), IUnitRepository
 {
-    private readonly DataContext _context = context;
+    
 }
