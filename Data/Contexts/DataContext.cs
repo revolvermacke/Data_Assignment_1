@@ -15,9 +15,51 @@ namespace Data.Contexts
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // Default values for different statuses.
+            modelBuilder.Entity<StatusEntity>().HasData(
+                new StatusEntity { Id = 1, StatusType = "Ej påbörjad" },
+                new StatusEntity { Id = 2, StatusType = "Pågående" },
+                new StatusEntity { Id = 3, StatusType = "Avslutad" }
+                );
+
+            modelBuilder.Entity<EmployeeEntity>()
+                .HasOne(x => x.Role)
+                .WithMany(x => x.Emplyoees)
+                .HasForeignKey(x => x.RoleId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ServiceEntity>()
+                .HasOne(x => x.Unit)
+                .WithMany(x => x.Services)
+                .HasForeignKey(x => x.UnitId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             modelBuilder.Entity<ProjectEntity>()
-                .HasMany(p => p.Service)
-                .WithMany(s => s.Project);
+                .HasOne(x => x.Customer)
+                .WithMany(x => x.Projects)
+                .HasForeignKey(x => x.CustomerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ProjectEntity>()
+                .HasOne(x => x.Employee)
+                .WithMany(x => x.Projects)
+                .HasForeignKey(x => x.EmployeeId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ProjectEntity>()
+                .HasOne(x => x.Status)
+                .WithMany(x => x.Projects)
+                .HasForeignKey(x => x.StatusId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ProjectEntity>()
+                .HasMany(x => x.Service)
+                .WithMany(x => x.Project);
+
+            modelBuilder.Entity<ProjectEntity>()
+                .Property(e => e.Id)
+                .UseIdentityColumn(100, 1);
         }
     }
 }
+

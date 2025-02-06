@@ -9,4 +9,5 @@ public class Project
     public string CustomerName { get; set; } = null!;
     public string ServiceName { get; set; } = null!;
     public string StatusType { get; set; } = null!;
+    public ICollection<ServiceModel> Services { get; set; } = [];
 }
