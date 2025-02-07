@@ -13,7 +13,7 @@ public static class ProjectFactory
 
         EmployeeId = registrationForm.EmployeeNameId,
         CustomerId = registrationForm.CustomerNameId,
-        StatusId = registrationForm.StatusTypeId
+        StatusId = registrationForm.StatusTypeId,
 
     };
 
@@ -24,6 +24,14 @@ public static class ProjectFactory
         EndDate = entity.EndDate.ToString(),
         EmployeeName = entity.Employee.FirstName + " " + entity.Employee.LastName,
         CustomerName = entity.Customer.Name,
-        StatusType = entity.Status.StatusType
+        StatusType = entity.Status.StatusType,
+        
+        Services = entity.ProjectServices.Select(x => new ServiceModel
+        {
+            Id = x.Services.Id,
+            Name = x.Services.Name,
+            Price = x.Services.Price,
+            Unit = x.Services.Unit.Quantity
+        }).ToList(),
     };
 }

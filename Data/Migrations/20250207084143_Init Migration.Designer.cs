@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250129093717_ServiceTable updated")]
-    partial class ServiceTableupdated
+    [Migration("20250207084143_Init Migration")]
+    partial class InitMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -77,7 +77,7 @@ namespace Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 100L);
 
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
@@ -87,9 +87,6 @@ namespace Data.Migrations
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("date");
-
-                    b.Property<int>("ServiceId")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("date");
@@ -110,6 +107,29 @@ namespace Data.Migrations
                     b.HasIndex("StatusId");
 
                     b.ToTable("Projects");
+                });
+
+            modelBuilder.Entity("Data.Entities.ProjectServiceEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ServiceId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectId");
+
+                    b.HasIndex("ServiceId");
+
+                    b.ToTable("ProjectServiceEntity");
                 });
 
             modelBuilder.Entity("Data.Entities.RoleEntity", b =>
@@ -143,8 +163,8 @@ namespace Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("Price")
-                        .HasColumnType("int");
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("UnitId")
                         .HasColumnType("int");
@@ -172,6 +192,23 @@ namespace Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Statuses");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            StatusType = "Ej påbörjad"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            StatusType = "Pågående"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            StatusType = "Avslutad"
+                        });
                 });
 
             modelBuilder.Entity("Data.Entities.UnitEntity", b =>
@@ -182,31 +219,14 @@ namespace Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("Quantity")
+                    b.Property<string>("Quantity")
+                        .IsRequired()
                         .HasMaxLength(10)
-                        .HasColumnType("int");
-
-                    b.Property<int>("ServiceId")
-                        .HasColumnType("int");
+                        .HasColumnType("nvarchar(10)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Units");
-                });
-
-            modelBuilder.Entity("ProjectEntityServiceEntity", b =>
-                {
-                    b.Property<int>("ProjectId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ServiceId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ProjectId", "ServiceId");
-
-                    b.HasIndex("ServiceId");
-
-                    b.ToTable("ProjectEntityServiceEntity");
                 });
 
             modelBuilder.Entity("Data.Entities.EmployeeEntity", b =>
@@ -214,7 +234,7 @@ namespace Data.Migrations
                     b.HasOne("Data.Entities.RoleEntity", "Role")
                         .WithMany("Emplyoees")
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Role");
@@ -225,19 +245,19 @@ namespace Data.Migrations
                     b.HasOne("Data.Entities.CustomerEntity", "Customer")
                         .WithMany("Projects")
                         .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Data.Entities.EmployeeEntity", "Employee")
                         .WithMany("Projects")
                         .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Data.Entities.StatusEntity", "Status")
                         .WithMany("Projects")
                         .HasForeignKey("StatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Customer");
@@ -247,30 +267,34 @@ namespace Data.Migrations
                     b.Navigation("Status");
                 });
 
+            modelBuilder.Entity("Data.Entities.ProjectServiceEntity", b =>
+                {
+                    b.HasOne("Data.Entities.ProjectEntity", "Projects")
+                        .WithMany("ProjectServices")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Data.Entities.ServiceEntity", "Services")
+                        .WithMany("ProjectServices")
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Projects");
+
+                    b.Navigation("Services");
+                });
+
             modelBuilder.Entity("Data.Entities.ServiceEntity", b =>
                 {
                     b.HasOne("Data.Entities.UnitEntity", "Unit")
                         .WithMany("Services")
                         .HasForeignKey("UnitId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Unit");
-                });
-
-            modelBuilder.Entity("ProjectEntityServiceEntity", b =>
-                {
-                    b.HasOne("Data.Entities.ProjectEntity", null)
-                        .WithMany()
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Data.Entities.ServiceEntity", null)
-                        .WithMany()
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Data.Entities.CustomerEntity", b =>
@@ -283,9 +307,19 @@ namespace Data.Migrations
                     b.Navigation("Projects");
                 });
 
+            modelBuilder.Entity("Data.Entities.ProjectEntity", b =>
+                {
+                    b.Navigation("ProjectServices");
+                });
+
             modelBuilder.Entity("Data.Entities.RoleEntity", b =>
                 {
                     b.Navigation("Emplyoees");
+                });
+
+            modelBuilder.Entity("Data.Entities.ServiceEntity", b =>
+                {
+                    b.Navigation("ProjectServices");
                 });
 
             modelBuilder.Entity("Data.Entities.StatusEntity", b =>

@@ -10,7 +10,7 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 
-builder.Services.AddDbContext<DataContext>(x => x.UseSqlServer("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\Admin\\source\\repos\\Data_Assignment_1\\Data\\Databases\\local_database.mdf;Integrated Security=True;Connect Timeout=30"));
+builder.Services.AddDbContext<DataContext>(x => x.UseSqlServer("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Projects\\Data_Assignment_1\\Data\\Databases\\local_database.mdf;Integrated Security=True;Connect Timeout=30"));
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<IEmployeeRepository ,EmployeeRepository>();
 builder.Services.AddScoped<IProjectRepository ,ProjectRepository>();

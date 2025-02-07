@@ -85,9 +85,6 @@ namespace Data.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("date");
 
-                    b.Property<int>("ServiceId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("date");
 
@@ -107,6 +104,29 @@ namespace Data.Migrations
                     b.HasIndex("StatusId");
 
                     b.ToTable("Projects");
+                });
+
+            modelBuilder.Entity("Data.Entities.ProjectServiceEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ServiceId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectId");
+
+                    b.HasIndex("ServiceId");
+
+                    b.ToTable("ProjectServiceEntity");
                 });
 
             modelBuilder.Entity("Data.Entities.RoleEntity", b =>
@@ -169,6 +189,23 @@ namespace Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Statuses");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            StatusType = "Ej påbörjad"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            StatusType = "Pågående"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            StatusType = "Avslutad"
+                        });
                 });
 
             modelBuilder.Entity("Data.Entities.UnitEntity", b =>
@@ -187,21 +224,6 @@ namespace Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Units");
-                });
-
-            modelBuilder.Entity("ProjectEntityServiceEntity", b =>
-                {
-                    b.Property<int>("ProjectId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ServiceId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ProjectId", "ServiceId");
-
-                    b.HasIndex("ServiceId");
-
-                    b.ToTable("ProjectEntityServiceEntity");
                 });
 
             modelBuilder.Entity("Data.Entities.EmployeeEntity", b =>
@@ -242,6 +264,25 @@ namespace Data.Migrations
                     b.Navigation("Status");
                 });
 
+            modelBuilder.Entity("Data.Entities.ProjectServiceEntity", b =>
+                {
+                    b.HasOne("Data.Entities.ProjectEntity", "Projects")
+                        .WithMany("ProjectServices")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Data.Entities.ServiceEntity", "Services")
+                        .WithMany("ProjectServices")
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Projects");
+
+                    b.Navigation("Services");
+                });
+
             modelBuilder.Entity("Data.Entities.ServiceEntity", b =>
                 {
                     b.HasOne("Data.Entities.UnitEntity", "Unit")
@@ -251,21 +292,6 @@ namespace Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Unit");
-                });
-
-            modelBuilder.Entity("ProjectEntityServiceEntity", b =>
-                {
-                    b.HasOne("Data.Entities.ProjectEntity", null)
-                        .WithMany()
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Data.Entities.ServiceEntity", null)
-                        .WithMany()
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Data.Entities.CustomerEntity", b =>
@@ -278,9 +304,19 @@ namespace Data.Migrations
                     b.Navigation("Projects");
                 });
 
+            modelBuilder.Entity("Data.Entities.ProjectEntity", b =>
+                {
+                    b.Navigation("ProjectServices");
+                });
+
             modelBuilder.Entity("Data.Entities.RoleEntity", b =>
                 {
                     b.Navigation("Emplyoees");
+                });
+
+            modelBuilder.Entity("Data.Entities.ServiceEntity", b =>
+                {
+                    b.Navigation("ProjectServices");
                 });
 
             modelBuilder.Entity("Data.Entities.StatusEntity", b =>

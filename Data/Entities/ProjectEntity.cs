@@ -24,8 +24,7 @@ public class ProjectEntity
     public int CustomerId { get; set; }
     public CustomerEntity Customer { get; set; } = null!;
 
-    public int ServiceId { get; set; }
-    public ICollection<ServiceEntity> Service { get; set; } = [];
+    public ICollection<ProjectServiceEntity> ProjectServices { get; set; } = [];
 
     public int StatusId { get; set; }
     public StatusEntity Status { get; set; } = null!;

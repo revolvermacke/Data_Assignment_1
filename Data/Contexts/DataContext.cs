@@ -52,9 +52,16 @@ namespace Data.Contexts
                 .HasForeignKey(x => x.StatusId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<ProjectEntity>()
-                .HasMany(x => x.Service)
-                .WithMany(x => x.Project);
+            modelBuilder.Entity<ProjectServiceEntity>()
+                .HasOne(x => x.Projects)
+                .WithMany(x => x.ProjectServices)
+                .HasForeignKey(x => x.ProjectId);
+
+            modelBuilder.Entity<ProjectServiceEntity>()
+                .HasOne(x => x.Services)
+                .WithMany(x => x.ProjectServices)
+                .HasForeignKey(x => x.ServiceId);
+                
 
             modelBuilder.Entity<ProjectEntity>()
                 .Property(e => e.Id)
