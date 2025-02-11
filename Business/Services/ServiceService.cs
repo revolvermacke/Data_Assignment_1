@@ -44,7 +44,7 @@ public class ServiceService(IServiceRepository serviceRepository, IUnitRepositor
         {
             await _serviceRepository.RollbackTransactionAsync();
             Debug.WriteLine(ex.Message);
-            return ResponseResult.Error($"Error retrieving service :: {ex.Message}");
+            return ResponseResult.Error($"Error creating service :: {ex.Message}");
         }
     }
 

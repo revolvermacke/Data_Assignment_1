@@ -56,7 +56,7 @@ public class EmployeeController(IEmployeeService employeeService) : ControllerBa
 
     }
 
-    [HttpGet]
+    [HttpGet("{id}")]
     public async Task<IActionResult> GetEmployeeById(int id)
     {
         if (!ModelState.IsValid)

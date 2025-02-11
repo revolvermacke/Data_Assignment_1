@@ -11,6 +11,12 @@ public static class CustomerFactory
         Name = registrationForm.CustomerName
     };
 
+    public static CustomerEntity CreateEntity(CustomerRegistrationForm registrationForm, int id) => new()
+    {
+        Id = id,
+        Name = registrationForm.CustomerName,
+    };
+
     public static Customer CreateModel(CustomerEntity entity) => new()
     {
         Id = entity.Id,

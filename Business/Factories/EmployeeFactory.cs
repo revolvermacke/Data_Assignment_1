@@ -13,6 +13,14 @@ public static class EmployeeFactory
         RoleId = roleId,
     };
 
+    public static EmployeeEntity CreateEntity(EmployeeRegistrationForm registrationForm, int id, int roleId) => new()
+    {
+        FirstName = registrationForm.FirstName,
+        LastName = registrationForm.LastName,
+        RoleId = roleId,
+        Id = id,
+    };
+
     public static Employee CreateModel(EmployeeEntity entity) => new()
     {
         Id = entity.Id,

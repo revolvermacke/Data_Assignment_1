@@ -84,8 +84,10 @@ public class CustomerService(ICustomerRepository customerRepository) : ICustomer
                 return ResponseResult.NotFound("Customer not found");
 
             await _customerRepository.BeginTransactionAsync();
-            entityToUpdate = CustomerFactory.CreateEntity(updateForm);
+            entityToUpdate = CustomerFactory.CreateEntity(updateForm, entityToUpdate.Id);
+
             await _customerRepository.UpdateAsync(x => x.Id == id, entityToUpdate);
+
             bool saveResult = await _customerRepository.SaveAsync();
             if (saveResult == false)
                 throw new Exception("Error saving");

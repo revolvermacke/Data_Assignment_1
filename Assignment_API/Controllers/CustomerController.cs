@@ -80,7 +80,7 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateCustomer(int id, CustomerRegistrationForm updateForm)
+    public async Task<IActionResult> UpdateCustomer(int id, [FromBody] CustomerRegistrationForm updateForm)
     {
         if (!ModelState.IsValid)
             return BadRequest();
