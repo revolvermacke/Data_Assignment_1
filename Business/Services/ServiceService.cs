@@ -5,6 +5,7 @@ using Business.Interfaces;
 using Business.Models;
 using Data.Interfaces;
 using Data.Entities;
+using Data.Repositories;
 
 namespace Business.Services;
 
@@ -20,11 +21,11 @@ public class ServiceService(IServiceRepository serviceRepository, IUnitRepositor
 
         try
         {
-            var unitEntity = await _unitTypeRepository.GetAsync(x => x.Quantity == form.Qantity);
+            var unitEntity = await _unitTypeRepository.GetAsync(x => x.Unit == form.Unit);
             await _serviceRepository.BeginTransactionAsync();
             if (unitEntity == null)
             {
-                unitEntity = new UnitEntity { Quantity = form.Qantity };
+                unitEntity = new UnitEntity { Unit = form.Unit };
                 await _unitTypeRepository.AddAsync(unitEntity);
                 bool unitSaveResult = await _unitTypeRepository.SaveAsync();
                 if (unitSaveResult == false)
@@ -92,8 +93,18 @@ public class ServiceService(IServiceRepository serviceRepository, IUnitRepositor
             if (entityToUpdate == null)
                 return ResponseResult.NotFound("Service not found");
 
+            var unitId = entityToUpdate.UnitId;
+            if (entityToUpdate.Unit.Unit != updateForm.Unit)
+            {
+                var unit = await _unitTypeRepository.GetAsync(x => x.Unit == updateForm.Unit);
+                if (unit == null)
+                    throw new Exception("unit not found");
+                unitId = unit.Id;
+            }
+
+           
             await _serviceRepository.BeginTransactionAsync();
-            entityToUpdate = ServiceFactory.CreateEntity(updateForm, entityToUpdate.UnitId);
+            entityToUpdate = ServiceFactory.CreateEntity(updateForm, entityToUpdate.Id, unitId);
             await _serviceRepository.UpdateAsync(x => x.Id == id, entityToUpdate);
             bool saveResult = await _serviceRepository.SaveAsync();
             if (saveResult == false)

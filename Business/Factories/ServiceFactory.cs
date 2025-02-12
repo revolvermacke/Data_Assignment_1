@@ -13,11 +13,21 @@ public class ServiceFactory
         UnitId = unitId,
     };
 
+    public static ServiceEntity CreateEntity(ServiceRegistrationForm form, int id, int unitId) => new()
+    {
+        Id = id,
+        Name = form.Name,
+        Price = form.Price,
+        UnitId = unitId,
+        Quantity = form.Quantity
+    };
+
     public static ServiceModel Create(ServiceEntity entity) => new()
     {
         Id = entity.Id,
         Name = entity.Name,
         Price = entity.Price,
-        Unit = entity.Unit.Quantity,
+        Unit = entity.Unit.Unit,
+        Quantity = entity.Quantity
     };
 }

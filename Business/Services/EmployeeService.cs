@@ -120,7 +120,16 @@ public class EmployeeService(IEmployeeRepository employeeRepository, IRoleRepori
                 return ResponseResult.NotFound("Employee not found");
 
             await _employeeRepository.BeginTransactionAsync();
-            entityToUpdate = EmployeeFactory.CreateEntity(updateForm, entityToUpdate.Id, entityToUpdate.RoleId);
+            var roleId = entityToUpdate.RoleId;
+            if (entityToUpdate.Role.RoleName != updateForm.RoleName)
+            {
+
+                var role = await _roleRepository.GetAsync(x => x.RoleName == updateForm.RoleName);
+                if (role == null)
+                    throw new Exception("role not found");
+                roleId = role.Id;
+            }
+            entityToUpdate = EmployeeFactory.CreateEntity(updateForm, entityToUpdate.Id, roleId);
 
             await _employeeRepository.UpdateAsync(x => x.Id == id, entityToUpdate);
 

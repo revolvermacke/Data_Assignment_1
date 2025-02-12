@@ -75,7 +75,6 @@ public class ProjectService(IProjectRepository projectRepository) : IProjectServ
         }
     }
 
-    //To do, gör så att det går at uppdatera projekt med nya services
     public async Task<IResponseResult> UpdateProjectAsync(int id, ProjectRegistrationForm updateForm)
     {
         if (updateForm == null)
@@ -88,7 +87,7 @@ public class ProjectService(IProjectRepository projectRepository) : IProjectServ
                 return ResponseResult.NotFound("Project not found");
 
             await _projectRepository.BeginTransactionAsync();
-            entityToUpdate = ProjectFactory.Create(updateForm);
+            entityToUpdate = ProjectFactory.Create(updateForm, entityToUpdate.Id);
             await _projectRepository.UpdateAsync(x => x.Id == id, entityToUpdate);
             var saveResult = await _projectRepository.SaveAsync();
             if (saveResult == false)

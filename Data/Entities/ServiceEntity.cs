@@ -13,6 +13,8 @@ public class ServiceEntity
     [Required]
     public decimal Price { get; set; }
 
+    public int Quantity { get; set; }
+
     public ICollection<ProjectServiceEntity> ProjectServices { get; set; } = [];
 
 

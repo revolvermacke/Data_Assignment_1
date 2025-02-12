@@ -15,37 +15,37 @@
 --INSERT INTO Customers (Name) VALUES ('Globex Corp.');
 --INSERT INTO Customers (Name) VALUES ('Initech');
 
---INSERT INTO Units (Quantity) VALUES ('tim');
---INSERT INTO Units (Quantity) VALUES ('dag');
---INSERT INTO Units (Quantity) VALUES ('styck');
+--INSERT INTO Units (Unit) VALUES ('tim');
+--INSERT INTO Units (Unit) VALUES ('dag');
+--INSERT INTO Units (Unit) VALUES ('styck');
 
---INSERT INTO Employees (FirstName, LastName, RoleId) VALUES ('Alice', 'Andersson', 31);
---INSERT INTO Employees (FirstName, LastName, RoleId) VALUES ('Bob', 'Berg', 32);
---INSERT INTO Employees (FirstName, LastName, RoleId) VALUES ('Cecilia', 'Carlsson', 33);
+--INSERT INTO Employees (FirstName, LastName, RoleId) VALUES ('Alice', 'Andersson', 1);
+--INSERT INTO Employees (FirstName, LastName, RoleId) VALUES ('Bob', 'Berg', 2);
+--INSERT INTO Employees (FirstName, LastName, RoleId) VALUES ('Cecilia', 'Carlsson', 3);
 
---INSERT INTO Services (Name, Price, UnitId)
---VALUES ('Konsulttjänst', 150.00, 25);
+--INSERT INTO Services (Name, Price, UnitId, Quantity)
+--VALUES ('Konsulttjänst', 150.00, 1, 10);
 
---INSERT INTO Services (Name, Price, UnitId)
---VALUES ('Utveckling', 200.00, 26);
+--INSERT INTO Services (Name, Price, UnitId, Quantity)
+--VALUES ('Utveckling', 200.00, 2, 5);
 
---INSERT INTO Services (Name, Price, UnitId)
---VALUES ('Support', 100.00, 27);
-
---INSERT INTO Projects (Title, StartDate, EndDate, EmployeeId, CustomerId, StatusId)
---VALUES ('Project Alpha', '2025-01-01', '2025-06-01', 17, 28, 2);
+--INSERT INTO Services (Name, Price, UnitId, Quantity)
+--VALUES ('Support', 100.00, 3, 10);
 
 --INSERT INTO Projects (Title, StartDate, EndDate, EmployeeId, CustomerId, StatusId)
---VALUES ('Project Beta', '2025-02-01', '2025-07-01', 18, 29, 1);
+--VALUES ('Project Alpha', '2025-01-01', '2025-06-01', 1, 1, 2);
 
 --INSERT INTO Projects (Title, StartDate, EndDate, EmployeeId, CustomerId, StatusId)
---VALUES ('Project Gamma', '2025-03-01', '2025-08-01', 19, 30, 3);
+--VALUES ('Project Beta', '2025-02-01', '2025-07-01', 2, 2, 1);
+
+--INSERT INTO Projects (Title, StartDate, EndDate, EmployeeId, CustomerId, StatusId)
+--VALUES ('Project Gamma', '2025-03-01', '2025-08-01', 3, 3, 3);
 
 --INSERT INTO ProjectServiceEntity (ProjectId, ServiceId)
---VALUES (109, 12);
+--VALUES (100, 1);
 
 --INSERT INTO ProjectServiceEntity (ProjectId, ServiceId)
---VALUES (109, 13);
+--VALUES (101, 2);
 
 --INSERT INTO ProjectServiceEntity (ProjectId, ServiceId)
---VALUES (111, 14);
+--VALUES (102, 3);

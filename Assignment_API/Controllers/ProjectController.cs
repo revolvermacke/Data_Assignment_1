@@ -66,7 +66,7 @@ public class ProjectController(IProjectService projectService) : Controller
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateProject(int id, ProjectRegistrationForm updateForm)
+    public async Task<IActionResult> UpdateProject(int id, [FromBody] ProjectRegistrationForm updateForm)
     {
         if (!ModelState.IsValid)
             return BadRequest();
@@ -78,8 +78,9 @@ public class ProjectController(IProjectService projectService) : Controller
             400 => BadRequest(response.ErrorMessage),
             409 => Conflict(response.ErrorMessage),
             500 => Problem(response.ErrorMessage),
-            _ => Problem("Something went wrong!"),
+            _ => Problem("Something went wrong, Please try again later!"),
         };
+
     }
 
     [HttpDelete("{id}")]
