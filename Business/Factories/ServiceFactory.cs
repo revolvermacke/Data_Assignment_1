@@ -2,32 +2,61 @@
 using Business.Models;
 using Data.Entities;
 
-namespace Business.Factories;
-
-public class ServiceFactory
+namespace Business.Factories
 {
-    public static ServiceEntity CreateEntity(ServiceRegistrationForm form, int unitId) => new()
+    public static class ServiceFactory
     {
-        Name = form.Name,
-        Price = form.Price,
-        UnitId = unitId,
-    };
+        /// <summary>
+        /// Skapar en ny ServiceEntity baserat på ett ServiceRegistrationForm.
+        /// Eftersom formuläret inte har "Name" så kan vi inte sätta entity.Name här.
+        /// Vi utgår från att ServiceId refererar till en redan existerande tjänst.
+        /// </summary>
+        /// <param name="form">DTO med tjänsteinformation (ServiceId, UnitId, Quantity)</param>
+        /// <returns>En ny instans av ServiceEntity (stub eller existerande ID)</returns>
+        public static ServiceEntity CreateEntity(ServiceRegistrationForm form)
+        {
+            return new ServiceEntity
+            {
+                // Antingen 0 om det är en ny tjänst, eller en befintlig ID om du avser uppdatering.
+                // Ofta används ServiceId för att slå upp en existerande tjänst i databasen.
+                //Id = form.ServiceId,
 
-    public static ServiceEntity CreateEntity(ServiceRegistrationForm form, int id, int unitId) => new()
-    {
-        Id = id,
-        Name = form.Name,
-        Price = form.Price,
-        UnitId = unitId,
-        Quantity = form.Quantity
-    };
+                // Sätt enhetens ID. 
+                // I en riktig implementation hämtar du vanligtvis hela UnitEntity från databasen.
+                Name = form.ServiceName,
+                UnitId = form.UnitId
+            };
+        }
 
-    public static ServiceModel Create(ServiceEntity entity) => new()
-    {
-        Id = entity.Id,
-        Name = entity.Name,
-        Price = entity.Price,
-        Unit = entity.Unit.Unit,
-        Quantity = entity.Quantity
-    };
+        /// <summary>
+        /// Överlagrad metod om du vill tvinga in ett explicit id (t.ex. vid en uppdatering).
+        /// </summary>
+        /// <param name="form">DTO med tjänsteinformation (ServiceId, UnitId, Quantity)</param>
+        /// <param name="id">Det id som ska sättas på entiteten</param>
+        /// <returns>En instans av ServiceEntity med specificerat id</returns>
+        //public static ServiceEntity CreateEntity(ServiceRegistrationForm form)
+        //{
+        //    return new ServiceEntity
+        //    {
+        //        Name = form.ServiceName,
+        //        UnitId = form.UnitId
+        //    };
+        //}
+
+        /// <summary>
+        /// Mapper en ServiceEntity till en ServiceModel för presentation eller API-svar.
+        /// </summary>
+        /// <param name="entity">ServiceEntity som ska mappas</param>
+        /// <returns>En instans av ServiceModel</returns>
+        public static ServiceModel Create(ServiceEntity entity)
+        {
+            // Anta att entity.Unit är laddad från databasen (eller null-checka om osäker).
+            return new ServiceModel
+            {
+                Id = entity.Id,
+                Name = entity.Name,         // Namn hämtas från entiteten i databasen
+                Unit = entity.Unit.Unit     // "Unit" är en sträng i UnitEntity
+            };
+        }
+    }
 }

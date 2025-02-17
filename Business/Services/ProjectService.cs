@@ -7,9 +7,11 @@ using Data.Interfaces;
 
 namespace Business.Services;
 
-public class ProjectService(IProjectRepository projectRepository) : IProjectService
+public class ProjectService(IProjectRepository projectRepository, IProjectServiceRepository projectServiceRepository, IServiceRepository serviceRepository) : IProjectService
 {
     private readonly IProjectRepository _projectRepository = projectRepository;
+    private readonly IProjectServiceRepository _projectServiceRepository = projectServiceRepository;
+    private readonly IServiceRepository _serviceRepository = serviceRepository;
 
     public async Task<IResponseResult> CreateProjectAsync(ProjectRegistrationForm form)
     {
@@ -24,10 +26,21 @@ public class ProjectService(IProjectRepository projectRepository) : IProjectServ
 
             await _projectRepository.BeginTransactionAsync();
             var projectEntity = ProjectFactory.Create(form);
-            await _projectRepository.AddAsync(projectEntity);
+
+            
+            var project = await _projectRepository.AddAsync(projectEntity);
             var saveResult = await _projectRepository.SaveAsync();
             if (saveResult == false)
                 throw new Exception("Error saving project");
+
+            var serviceIds = form.Services.Select(s => s.ServiceId).ToList();
+
+
+            
+            //var result = await _projectServiceRepository.AddAsync(ProjectServiceFactory.Create(project.Id, form.))
+
+            // saveResult.projectId , form.ServiceId from.Quantity => Factory(räkna ut totalprice) - få en projectServiceEntity 
+            // _projectServiceReposity.Add(projectServceEntity)
 
             await _projectRepository.CommitTransactionAsync();
             return ResponseResult.Ok();

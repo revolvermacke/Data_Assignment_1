@@ -9,4 +9,7 @@ public class ProjectServiceEntity
 
     public int ServiceId { get; set; }
     public ServiceEntity Services { get; set; } = null!;
+
+    public int Quantity { get; set; }
+    public decimal TotalPrice { get; set; }
 }

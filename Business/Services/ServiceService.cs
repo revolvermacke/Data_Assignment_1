@@ -21,18 +21,23 @@ public class ServiceService(IServiceRepository serviceRepository, IUnitRepositor
 
         try
         {
-            var unitEntity = await _unitTypeRepository.GetAsync(x => x.Unit == form.Unit);
-            await _serviceRepository.BeginTransactionAsync();
-            if (unitEntity == null)
-            {
-                unitEntity = new UnitEntity { Unit = form.Unit };
-                await _unitTypeRepository.AddAsync(unitEntity);
-                bool unitSaveResult = await _unitTypeRepository.SaveAsync();
-                if (unitSaveResult == false)
-                    throw new Exception("Error saving unit");
-            }
+            var existingServiceEntity = await _serviceRepository.GetAsync(x => x.Name == form.ServiceName);
+            if (existingServiceEntity != null)
+                return ResponseResult.AlreadyExists("Conflict");
 
-            var serviceEntity = ServiceFactory.CreateEntity(form, unitEntity.Id);
+
+            //var unitEntity = await _unitTypeRepository.GetAsync(x => x.Unit == form.Unit);
+            //await _serviceRepository.BeginTransactionAsync();
+            //if (unitEntity == null)
+            //{
+            //    unitEntity = new UnitEntity { Unit = form.Unit };
+            //    await _unitTypeRepository.AddAsync(unitEntity);
+            //    bool unitSaveResult = await _unitTypeRepository.SaveAsync();
+            //    if (unitSaveResult == false)
+            //        throw new Exception("Error saving unit");
+            //}
+
+            var serviceEntity = ServiceFactory.CreateEntity(form);
             await _serviceRepository.AddAsync(serviceEntity);
             bool saveResult = await _serviceRepository.SaveAsync();
             if (saveResult == false)
@@ -93,18 +98,18 @@ public class ServiceService(IServiceRepository serviceRepository, IUnitRepositor
             if (entityToUpdate == null)
                 return ResponseResult.NotFound("Service not found");
 
-            var unitId = entityToUpdate.UnitId;
-            if (entityToUpdate.Unit.Unit != updateForm.Unit)
-            {
-                var unit = await _unitTypeRepository.GetAsync(x => x.Unit == updateForm.Unit);
-                if (unit == null)
-                    throw new Exception("unit not found");
-                unitId = unit.Id;
-            }
+            //var unitId = entityToUpdate.UnitId;
+            //if (entityToUpdate.Unit.Unit != updateForm.Unit)
+            //{
+            //    var unit = await _unitTypeRepository.GetAsync(x => x.Unit == updateForm.Unit);
+            //    if (unit == null)
+            //        throw new Exception("unit not found");
+            //    unitId = unit.Id;
+            //}
 
            
             await _serviceRepository.BeginTransactionAsync();
-            entityToUpdate = ServiceFactory.CreateEntity(updateForm, entityToUpdate.Id, unitId);
+            entityToUpdate = ServiceFactory.CreateEntity(updateForm);
             await _serviceRepository.UpdateAsync(x => x.Id == id, entityToUpdate);
             bool saveResult = await _serviceRepository.SaveAsync();
             if (saveResult == false)

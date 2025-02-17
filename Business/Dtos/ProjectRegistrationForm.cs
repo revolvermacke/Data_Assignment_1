@@ -13,4 +13,6 @@ public class ProjectRegistrationForm
     public int EmployeeNameId { get; set; }
     public int CustomerNameId { get; set; }
     public int StatusTypeId { get; set; }
+
+    public List<ServiceRegistrationForm> Services { get; set; } = [];
 }
