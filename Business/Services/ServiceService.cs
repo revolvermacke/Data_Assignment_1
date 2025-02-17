@@ -21,9 +21,9 @@ public class ServiceService(IServiceRepository serviceRepository, IUnitRepositor
 
         try
         {
-            var existingServiceEntity = await _serviceRepository.GetAsync(x => x.Name == form.ServiceName);
-            if (existingServiceEntity != null)
-                return ResponseResult.AlreadyExists("Conflict");
+            //var existingServiceEntity = await _serviceRepository.GetAsync(x => x.Name == form.ServiceName);
+            //if (existingServiceEntity != null)
+            //    return ResponseResult.AlreadyExists("Conflict");
 
 
             //var unitEntity = await _unitTypeRepository.GetAsync(x => x.Unit == form.Unit);
@@ -37,13 +37,13 @@ public class ServiceService(IServiceRepository serviceRepository, IUnitRepositor
             //        throw new Exception("Error saving unit");
             //}
 
-            var serviceEntity = ServiceFactory.CreateEntity(form);
-            await _serviceRepository.AddAsync(serviceEntity);
-            bool saveResult = await _serviceRepository.SaveAsync();
-            if (saveResult == false)
-                throw new Exception("Error saving service");
+            //var serviceEntity = ServiceFactory.CreateEntity(form);
+            //await _serviceRepository.AddAsync(serviceEntity);
+            //bool saveResult = await _serviceRepository.SaveAsync();
+            //if (saveResult == false)
+            //    throw new Exception("Error saving service");
 
-            await _serviceRepository.CommitTransactionAsync();
+            //await _serviceRepository.CommitTransactionAsync();
             return ResponseResult.Ok();
         }
         catch (Exception ex)
@@ -109,7 +109,7 @@ public class ServiceService(IServiceRepository serviceRepository, IUnitRepositor
 
            
             await _serviceRepository.BeginTransactionAsync();
-            entityToUpdate = ServiceFactory.CreateEntity(updateForm);
+           // entityToUpdate = ServiceFactory.CreateEntity(updateForm);
             await _serviceRepository.UpdateAsync(x => x.Id == id, entityToUpdate);
             bool saveResult = await _serviceRepository.SaveAsync();
             if (saveResult == false)

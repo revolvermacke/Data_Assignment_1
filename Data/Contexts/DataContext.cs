@@ -12,6 +12,7 @@ namespace Data.Contexts
         public DbSet<ServiceEntity> Services { get; set; } = null!;
         public DbSet<ProjectEntity> Projects { get; set; } = null!;
         public DbSet<UnitEntity> Units { get; set; } = null!;
+        public DbSet<ProjectServiceEntity> ProjectServices { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

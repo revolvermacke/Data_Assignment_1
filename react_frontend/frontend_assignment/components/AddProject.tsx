@@ -57,6 +57,7 @@ interface AvailableService {
 interface SelectedService {
   serviceId: string; // Välj befintligt tjänste-ID från dropdown
   quantity: number;
+  price: number;
 }
 
 interface ProjectFormData {
@@ -89,7 +90,9 @@ const AddProjectForm = () => {
 
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [customers, setCustomers] = useState<Customer[]>([]);
-  const [availableServices, setAvailableServices] = useState<AvailableService[]>([]);
+  const [availableServices, setAvailableServices] = useState<
+    AvailableService[]
+  >([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -146,7 +149,10 @@ const AddProjectForm = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 max-w-lg mx-auto p-6 bg-white shadow-md rounded-lg">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-4 max-w-lg mx-auto p-6 bg-white shadow-md rounded-lg"
+      >
         <h2 className="text-2xl font-bold mb-4">Skapa nytt projekt</h2>
 
         {error && <p className="text-red-500">{error}</p>}
@@ -257,7 +263,10 @@ const AddProjectForm = () => {
                   <SelectContent className="bg-white text-black border border-gray-300 shadow-lg z-50">
                     <SelectGroup>
                       {statuses.map((status) => (
-                        <SelectItem key={status.id} value={status.id.toString()}>
+                        <SelectItem
+                          key={status.id}
+                          value={status.id.toString()}
+                        >
                           {status.name}
                         </SelectItem>
                       ))}
@@ -274,7 +283,10 @@ const AddProjectForm = () => {
         <div>
           <h3 className="text-xl font-semibold mt-4">Tjänster</h3>
           {fields.map((field, index) => (
-            <div key={field.id} className="flex flex-col space-y-2 border p-2 rounded mb-2">
+            <div
+              key={field.id}
+              className="flex flex-col space-y-2 border p-2 rounded mb-2"
+            >
               {/* Dropdown för att välja befintlig tjänst */}
               <FormField
                 control={form.control}
@@ -284,14 +296,33 @@ const AddProjectForm = () => {
                   <FormItem>
                     <FormLabel>Tjänst</FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select
+                        onValueChange={(value) => {
+                          field.onChange(value);
+                          // Hitta vald tjänst i availableServices
+                          const foundSvc = availableServices.find(
+                            (svc) => svc.id === parseInt(value)
+                          );
+                          if (foundSvc) {
+                            // Sätt priset automatiskt i formuläret, utan att visa ett eget inputfält
+                            form.setValue(
+                              `services.${index}.price`,
+                              foundSvc.price
+                            );
+                          }
+                        }}
+                        value={field.value}
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder="Välj tjänst" />
                         </SelectTrigger>
                         <SelectContent className="bg-white text-black border border-gray-300 shadow-lg z-50">
                           <SelectGroup>
                             {availableServices.map((svc) => (
-                              <SelectItem key={svc.id} value={svc.id.toString()}>
+                              <SelectItem
+                                key={svc.id}
+                                value={svc.id.toString()}
+                              >
                                 {svc.name} ({svc.unit}, {svc.price} SEK)
                               </SelectItem>
                             ))}
@@ -312,7 +343,11 @@ const AddProjectForm = () => {
                   <FormItem>
                     <FormLabel>Antal</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="Ange antal" {...field} />
+                      <Input
+                        type="number"
+                        placeholder="Ange antal"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -323,7 +358,9 @@ const AddProjectForm = () => {
               </Button>
             </div>
           ))}
-          <Button onClick={() => append({ serviceId: "", quantity: 1 })}>
+          <Button
+            onClick={() => append({ serviceId: "", quantity: 1, price: 0 })}
+          >
             Lägg till tjänst
           </Button>
         </div>

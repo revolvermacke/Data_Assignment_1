@@ -7,7 +7,7 @@ namespace Business.Factories
 {
     public static class ProjectFactory
     {
-        public static ProjectEntity Create(ProjectRegistrationForm registrationForm)
+        public static ProjectEntity Create(ProjectRegistrationForm registrationForm, decimal projectTotalPrice)
         {
             return new ProjectEntity
             {
@@ -16,7 +16,7 @@ namespace Business.Factories
                 EmployeeId = registrationForm.EmployeeNameId,
                 CustomerId = registrationForm.CustomerNameId,
                 StatusId = registrationForm.StatusTypeId,
-
+                ProjectTotalPrice = projectTotalPrice,
                
                
             };
@@ -45,6 +45,7 @@ namespace Business.Factories
                 EmployeeName = entity.Employee.FirstName + " " + entity.Employee.LastName,
                 CustomerName = entity.Customer.Name,
                 StatusType = entity.Status.StatusType,
+                ProjectTotalPrice= entity.ProjectTotalPrice,
                 Services = entity.ProjectServices.Select(ps => new ServiceModel
                 {
                     Id = ps.Services.Id,

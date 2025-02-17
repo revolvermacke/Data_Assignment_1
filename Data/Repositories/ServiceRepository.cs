@@ -9,6 +9,23 @@ namespace Data.Repositories;
 
 public class ServiceRepository(DataContext context) : BaseRepository<ServiceEntity>(context), IServiceRepository
 {
+    public async Task<List<ServiceEntity>> GetByIdsAsync(List<int> serviceIds)
+    {
+        try
+        {
+            if (serviceIds == null || !serviceIds.Any())
+                return [];
+
+            return await _context.Services.Where(s => serviceIds.Contains(s.Id)).ToListAsync();
+        }
+        catch (Exception)
+        {
+
+            return [];
+        }
+    }
+
+
     public override async Task<IEnumerable<ServiceEntity>> GetAllAsync()
     {
         try

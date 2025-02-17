@@ -7,11 +7,12 @@ using Data.Interfaces;
 
 namespace Business.Services;
 
-public class ProjectService(IProjectRepository projectRepository, IProjectServiceRepository projectServiceRepository, IServiceRepository serviceRepository) : IProjectService
+public class ProjectService(IProjectRepository projectRepository, IProjectServiceRepository projectServiceRepository, IServiceRepository serviceRepository, IProjectServiceManager projectServiceManager) : IProjectService
 {
     private readonly IProjectRepository _projectRepository = projectRepository;
     private readonly IProjectServiceRepository _projectServiceRepository = projectServiceRepository;
     private readonly IServiceRepository _serviceRepository = serviceRepository;
+    private readonly IProjectServiceManager _projectServiceManager = projectServiceManager;
 
     public async Task<IResponseResult> CreateProjectAsync(ProjectRegistrationForm form)
     {
@@ -25,22 +26,29 @@ public class ProjectService(IProjectRepository projectRepository, IProjectServic
                 return ResponseResult.Error("Project with that name already exist");
 
             await _projectRepository.BeginTransactionAsync();
-            var projectEntity = ProjectFactory.Create(form);
-
             
+            
+            var projectServices = ProjectServiceFactory.Create(form.Services);
+
+            var projectEntity = ProjectFactory.Create(form, projectServices.Sum(s => s.TotalPrice));
+
+
             var project = await _projectRepository.AddAsync(projectEntity);
             var saveResult = await _projectRepository.SaveAsync();
             if (saveResult == false)
                 throw new Exception("Error saving project");
 
-            var serviceIds = form.Services.Select(s => s.ServiceId).ToList();
-
-
             
-            //var result = await _projectServiceRepository.AddAsync(ProjectServiceFactory.Create(project.Id, form.))
 
-            // saveResult.projectId , form.ServiceId from.Quantity => Factory(räkna ut totalprice) - få en projectServiceEntity 
-            // _projectServiceReposity.Add(projectServceEntity)
+            foreach (var projectService in projectServices)
+            {
+                projectService.ProjectId = project.Id;
+            }
+
+            await _projectServiceRepository.AddRangeAsync(projectServices);
+            await _projectServiceRepository.SaveAsync();
+
+           
 
             await _projectRepository.CommitTransactionAsync();
             return ResponseResult.Ok();
