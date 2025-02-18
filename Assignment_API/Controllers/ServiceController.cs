@@ -13,7 +13,7 @@ public class ServiceController(IServiceService serviceService) : Controller
     private readonly IServiceService _serviceService = serviceService;
 
     [HttpPost]
-    public async Task<IActionResult> CreateService([FromBody] ServiceRegistrationForm form)
+    public async Task<IActionResult> CreateService([FromBody] ServiceDto form)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);

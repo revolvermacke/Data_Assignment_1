@@ -1,5 +1,4 @@
 import Link from "next/link";
-
 import Products from "@/components/products";
 
 export default function Home() {
@@ -17,9 +16,15 @@ export default function Home() {
           </Link>
           <Link
             href="/AddProject"
-            className="text-black-500 border-2 rounded-sm p-2  border-black bg-primary text-primary-foreground hover:bg-primary/90"
+            className="text-black-500 border-2 rounded-sm p-2 border-black bg-primary text-primary-foreground hover:bg-primary/90"
           >
             Add New Project
+          </Link>
+          <Link
+            href="/AddCustomer"
+            className="text-black-500 border-2 rounded-sm p-2 border-black bg-primary text-primary-foreground hover:bg-primary/90"
+          >
+            Add New Customer
           </Link>
         </nav>
       </div>

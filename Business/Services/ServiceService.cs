@@ -14,36 +14,23 @@ public class ServiceService(IServiceRepository serviceRepository, IUnitRepositor
     private readonly IServiceRepository _serviceRepository = serviceRepository;
     private readonly IUnitRepository _unitTypeRepository = unitTypeRepository;
 
-    public async Task<IResponseResult> CreateServiceAsync(ServiceRegistrationForm form)
+    public async Task<IResponseResult> CreateServiceAsync(ServiceDto form)
     {
         if (form == null)
             return ResponseResult.BadRequest("Invalid form");
 
         try
         {
-            //var existingServiceEntity = await _serviceRepository.GetAsync(x => x.Name == form.ServiceName);
-            //if (existingServiceEntity != null)
-            //    return ResponseResult.AlreadyExists("Conflict");
+            await _serviceRepository.BeginTransactionAsync();
 
 
-            //var unitEntity = await _unitTypeRepository.GetAsync(x => x.Unit == form.Unit);
-            //await _serviceRepository.BeginTransactionAsync();
-            //if (unitEntity == null)
-            //{
-            //    unitEntity = new UnitEntity { Unit = form.Unit };
-            //    await _unitTypeRepository.AddAsync(unitEntity);
-            //    bool unitSaveResult = await _unitTypeRepository.SaveAsync();
-            //    if (unitSaveResult == false)
-            //        throw new Exception("Error saving unit");
-            //}
+            var serviceEntity = ServiceFactory.CreateEntity(form);
+            await _serviceRepository.AddAsync(serviceEntity);
+            bool saveResult = await _serviceRepository.SaveAsync();
+            if (saveResult == false)
+                throw new Exception("Error saving service");
 
-            //var serviceEntity = ServiceFactory.CreateEntity(form);
-            //await _serviceRepository.AddAsync(serviceEntity);
-            //bool saveResult = await _serviceRepository.SaveAsync();
-            //if (saveResult == false)
-            //    throw new Exception("Error saving service");
-
-            //await _serviceRepository.CommitTransactionAsync();
+            await _serviceRepository.CommitTransactionAsync();
             return ResponseResult.Ok();
         }
         catch (Exception ex)

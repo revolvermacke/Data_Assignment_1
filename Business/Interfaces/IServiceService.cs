@@ -4,7 +4,7 @@ namespace Business.Interfaces;
 
 public interface IServiceService
 {
-    Task<IResponseResult> CreateServiceAsync(ServiceRegistrationForm registrationForm);
+    Task<IResponseResult> CreateServiceAsync(ServiceDto registrationForm);
     Task<IResponseResult> GetAllServicesAsync();
     Task<IResponseResult> GetServiceByIdAsync(int id);
     Task<IResponseResult> UpdateServiceAsync(int id, ServiceRegistrationForm updateForm);
